@@ -24,6 +24,11 @@ export function AuthProvider({ children }) {
       }
 
       try {
+        if (!supabase) {
+          console.warn("Supabase client not initialized. Check environment variables.")
+          setLoading(false)
+          return
+        }
         const { data: { session } } = await supabase.auth.getSession()
         setSession(session)
 
@@ -56,6 +61,8 @@ export function AuthProvider({ children }) {
     }
 
     fetchUser()
+
+    if (!supabase) return
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
